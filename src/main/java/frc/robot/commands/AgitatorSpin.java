@@ -1,20 +1,20 @@
 //Tm Bennett/Hunter
 
 package frc.robot.commands;
-import frc.robot.subsystems.Feeder.FeederConveyor;
+import frc.robot.subsystems.Feeder.Agitator;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class feederSpin extends Command {
+public class AgitatorSpin extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-    private final FeederConveyor Feeder;
-    private final int speed;
+    private final Agitator Feeder;
+    private final double speed;
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public feederSpin(FeederConveyor subsystem, int S) {
+  public AgitatorSpin(Agitator subsystem, double S) {
     Feeder = subsystem;
     speed = S;
     // Use addRequirements() here to declare subsystem dependencies.

@@ -4,7 +4,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Hopper extends SubsystemBase {
+public class Intake extends SubsystemBase {
     private final SparkMax hopperMotor1 = new SparkMax(1, MotorType.kBrushless);
     
     public void feeder(int speed){

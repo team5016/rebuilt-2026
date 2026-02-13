@@ -1,18 +1,18 @@
 package frc.robot.commands;
-import frc.robot.subsystems.Feeder.Hopper;
+import frc.robot.subsystems.Feeder.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class HopperSpin extends Command {
+public class IntakeSpin extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-    private final Hopper H_op;
+    private final Intake H_op;
     private final int speed;
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public HopperSpin(Hopper subsystem, int S) {
+  public IntakeSpin(Intake subsystem, int S) {
     H_op = subsystem;
     speed = S;
     // Use addRequirements() here to declare subsystem dependencies.
