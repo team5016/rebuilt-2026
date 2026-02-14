@@ -25,7 +25,7 @@ import frc.robot.subsystems.Intake.Collector;
 import frc.robot.subsystems.Intake.ExtendableHopper;
 import frc.robot.subsystems.Shooter.Agitator;
 import frc.robot.subsystems.Shooter.Feeder;
-import frc.robot.subsystems.Shooter.ShooterSubsystem;
+import frc.robot.subsystems.Shooter.FlywheelShooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -41,7 +41,7 @@ public class RobotContainer {
   private final ExtendableHopper intakeHopper = new ExtendableHopper();
   private final Agitator agitator = new Agitator();
   private final Feeder shooterFeeder = new Feeder();
-  private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final FlywheelShooter shooter = new FlywheelShooter();
 
   // Commands
   private final AgitatorSpin agit = new AgitatorSpin(agitator);
@@ -97,6 +97,7 @@ public class RobotContainer {
     
   private void configureGameplayBindings() {
     operatorController.b().onTrue(intakeCollector.run());
+    operatorController.a().onTrue(shooter.Shoot());
   }
 
   /**
