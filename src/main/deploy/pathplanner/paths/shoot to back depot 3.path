@@ -1,0 +1,86 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.434602409638554,
+        "y": 4.035
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.7554503076224828,
+        "y": 3.9896405264162853
+      },
+      "isLocked": false,
+      "linkedName": "shoot"
+    },
+    {
+      "anchor": {
+        "x": 2.900456490734316,
+        "y": 0.548031383741254
+      },
+      "prevControl": {
+        "x": 1.732573376808974,
+        "y": 1.0666895553164162
+      },
+      "nextControl": {
+        "x": 3.312994580776727,
+        "y": 0.36482276557111026
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.787546362337853,
+        "y": 0.8714978602034511
+      },
+      "prevControl": {
+        "x": 8.654093364965542,
+        "y": 1.1044381775999996
+      },
+      "nextControl": {
+        "x": 8.911822682898265,
+        "y": 0.6545753022525416
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.787546362337853,
+        "y": 5.9952068473609135
+      },
+      "prevControl": {
+        "x": 8.784064803955715,
+        "y": 5.628958067081172
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "back depot up"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -0.44371075975023716
+  },
+  "useDefaultConstraints": true
+}
