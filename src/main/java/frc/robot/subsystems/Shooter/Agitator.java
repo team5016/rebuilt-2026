@@ -12,13 +12,13 @@ public class Agitator extends SubsystemBase {
   // private final SparkMax motorLeft = new SparkMax(6, MotorType.kBrushless);
   private final SparkMax motorRight = new SparkMax(7, MotorType.kBrushless);
 
-  public Command ShakeIt() {
+  public Command shakeIt() {
     return this.startEnd(
       () -> {
         motorRight.set(0.5);
       },
       () -> {
-        motorRight.set(0.5);
+        motorRight.set(0);
       }
     );
   }

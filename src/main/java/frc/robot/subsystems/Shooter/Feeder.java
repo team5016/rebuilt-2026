@@ -9,7 +9,7 @@ public class Feeder extends SubsystemBase {
 
   private final SparkMax feederMotor = new SparkMax(8, MotorType.kBrushless);
 
-  public Command Shtake() {
+  public Command feed() {
     return this.startEnd(() -> feederMotor.set(-0.5), () -> feederMotor.set(0));
   }
 }
