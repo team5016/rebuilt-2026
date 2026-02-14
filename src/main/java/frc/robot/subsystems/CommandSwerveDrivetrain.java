@@ -246,19 +246,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         // Vision integration (Limelight)
-        if (!withVisionOdometry) {
-            return;
-        }
-
-        // Limelight MegaTag2 integration
-        var driveState = getState();
-        double headingDeg = driveState.Pose.getRotation().getDegrees();
-        double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
-        LimelightHelpers.SetRobotOrientation("limelight", headingDeg, 0, 0, 0, 0, 0);
-        var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-        if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
-            addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
-            SmartDashboard.putString("LL Pose", llMeasurement.pose.toString());
+        if (withVisionOdometry) {
+            // Limelight MegaTag2 integration
+            var driveState = getState();
+            double headingDeg = driveState.Pose.getRotation().getDegrees();
+            double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
+            LimelightHelpers.SetRobotOrientation("limelight", headingDeg, 0, 0, 0, 0, 0);
+            var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+            if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
+                addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
+                SmartDashboard.putString("LL Pose", llMeasurement.pose.toString());
+            }
         }
     }
 
