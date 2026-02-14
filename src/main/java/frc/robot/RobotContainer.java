@@ -96,7 +96,7 @@ public class RobotContainer {
   }
     
   private void configureGameplayBindings() {
-    
+    operatorController.b().onTrue(intakeCollector.run());
   }
 
   /**
