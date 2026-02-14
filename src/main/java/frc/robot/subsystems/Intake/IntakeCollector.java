@@ -5,7 +5,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Collector extends SubsystemBase {
+public class IntakeCollector extends SubsystemBase {
 
   private final SparkMax collectorMotor = new SparkMax(9, MotorType.kBrushless);
 

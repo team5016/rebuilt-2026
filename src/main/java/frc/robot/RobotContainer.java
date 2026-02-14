@@ -21,7 +21,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Intake.Collector;
+import frc.robot.subsystems.Intake.IntakeCollector;
 import frc.robot.subsystems.Intake.ExtendableHopper;
 import frc.robot.subsystems.Shooter.Agitator;
 import frc.robot.subsystems.Shooter.Feeder;
@@ -37,7 +37,7 @@ public class RobotContainer {
 
   // Subsystems
   private final Swerve swerveDrivetrain = new Swerve();
-  private final Collector intakeCollector = new Collector();
+  private final IntakeCollector intakeCollector = new IntakeCollector();
   private final ExtendableHopper intakeHopper = new ExtendableHopper();
   private final Agitator agitator = new Agitator();
   private final Feeder shooterFeeder = new Feeder();
