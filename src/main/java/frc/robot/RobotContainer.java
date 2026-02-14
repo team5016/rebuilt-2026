@@ -98,6 +98,11 @@ public class RobotContainer {
   private void configureGameplayBindings() {
     operatorController.b().onTrue(intakeCollector.run());
     operatorController.a().onTrue(shooter.Shoot());
+    operatorController.x().onTrue(agitator.shakeIt());
+    operatorController.y().onTrue(shooterFeeder.feed());
+    operatorController.rightTrigger().onTrue(intakeHopper.toggleExtend());
+    
+    
   }
 
   /**
