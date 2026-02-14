@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 
 public class Swerve {
@@ -29,25 +28,25 @@ public class Swerve {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
-
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public Swerve() {
-        configureBindings();
     }
 
-     private void configureBindings() {
+     public void configureBindings(CommandXboxController controller) {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+
+        // Fine motor control
+        fineMotorControlBindings(controller);
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -56,22 +55,87 @@ public class Swerve {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        controller.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-controller.getLeftY(), -controller.getLeftX()))
         ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+    }
+
+    private void fineMotorControlBindings(CommandXboxController controller) {
+        double speedX = 0.5;
+        double speedY = 0.5;
+
+        // Forward
+        controller.povUp().whileTrue(
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(speedX)
+            )
+        );
+
+        // Backward
+        controller.povDown().whileTrue(
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(-speedX)
+            )
+        );
+
+        // Left
+        controller.povLeft().whileTrue(
+            drivetrain.applyRequest(() ->
+                drive.withVelocityY(speedY)
+            )
+        );
+
+        // Right
+        controller.povRight().whileTrue(
+            drivetrain.applyRequest(() ->
+                drive.withVelocityY(-speedY)
+            )
+        );
+
+        // Forward-Left
+        controller.povUpLeft().whileTrue(
+            drivetrain.applyRequest(() -> 
+                drive.withVelocityX(speedX)
+                     .withVelocityY(speedY)    
+            )
+        );
+
+        // Forward-Right
+        controller.povUpRight().whileTrue(
+            drivetrain.applyRequest(() -> 
+                drive.withVelocityX(speedX)
+                     .withVelocityY(-speedY)    
+            )
+        );
+
+        // Backward-Left
+        controller.povDownLeft().whileTrue(
+            drivetrain.applyRequest(() -> 
+                drive.withVelocityX(-speedX)
+                     .withVelocityY(speedY)    
+            )
+        );
+
+        // Backward-Right
+        controller.povDownRight().whileTrue(
+            drivetrain.applyRequest(() -> 
+                drive.withVelocityX(-speedX)
+                     .withVelocityY(-speedY)
+            )
+        );
     }
 
     public Command getSwerveAuto() {

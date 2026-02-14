@@ -10,13 +10,17 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AgitatorSpin;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Intake.Collector;
 import frc.robot.subsystems.Intake.ExtendableHopper;
 import frc.robot.subsystems.Shooter.Agitator;
@@ -32,6 +36,7 @@ import frc.robot.subsystems.Shooter.ShooterSubsystem;
 public class RobotContainer {
 
   // Subsystems
+  private final Swerve swerveDrivetrain = new Swerve();
   private final Collector intakeCollector = new Collector();
   private final ExtendableHopper intakeHopper = new ExtendableHopper();
   private final Agitator agitator = new Agitator();
@@ -47,12 +52,12 @@ public class RobotContainer {
     new CommandXboxController(OperatorConstants.OperatorControllerPort);
 
   /* Path follower */
-  private final SendableChooser<Command> autoChooser;
+  //private final SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     registerNamedCommands();
-    autoChooser = AutoBuilder.buildAutoChooser("<<<CHANGE NAME>>>");
+    //autoChooser = AutoBuilder.buildAutoChooser("<<<CHANGE NAME>>>");
 
     configureBindings();
 
@@ -82,11 +87,17 @@ public class RobotContainer {
     // // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // // cancelling on release.
     // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-
-    configureGameplayBindings();
+    configureDriveBindings();
+        configureGameplayBindings();
+      }
+    
+  private void configureDriveBindings() {
+    swerveDrivetrain.configureBindings(driverController);
   }
-
-  private void configureGameplayBindings() {}
+    
+  private void configureGameplayBindings() {
+    
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -94,6 +105,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    //return autoChooser.getSelected();
+    return Commands.none();
   }
 }
