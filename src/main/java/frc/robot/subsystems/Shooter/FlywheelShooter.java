@@ -6,7 +6,9 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.WaitForSpeedCommand;
 
 public class FlywheelShooter extends SubsystemBase {
 
@@ -34,27 +36,14 @@ public class FlywheelShooter extends SubsystemBase {
     }
 
     public Command shoot() {
-        return this.startEnd(
-                () -> {
-                    krakenMotor.setControl(velocityVoltage.withVelocity(RotationsPerSecond));
-                    while (!IsAtSpeed()) {
-                        try {
-                            wait(10);
-                        } catch (InterruptedException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                () -> krakenMotor.setControl(brake));
+        return new SequentialCommandGroup(
+            this.runOnce(() -> krakenMotor.setControl(velocityVoltage.withVelocity(RotationsPerSecond))),
+            new WaitForSpeedCommand(krakenMotor, RotationsPerSecond, 0.1)
+        );
     }
     
     public Command stop() {
         return this.runOnce(() -> krakenMotor.setControl(brake));
-    }
-
-    private boolean IsAtSpeed() {
-        return krakenMotor.getVelocity().isNear(RotationsPerSecond, 0.1);
     }
 
     private void applyConfig(TalonFXConfiguration config) {
