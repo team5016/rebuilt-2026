@@ -6,8 +6,10 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.WaitForSpeedCommand;
 
 public class FlywheelShooter extends SubsystemBase {
@@ -36,7 +38,8 @@ public class FlywheelShooter extends SubsystemBase {
     }
 
     public Command shoot() {
-        return new SequentialCommandGroup(
+        return new ParallelCommandGroup(
+            // setControl only needs to be called once to keep velocity
             this.runOnce(() -> krakenMotor.setControl(velocityVoltage.withVelocity(RotationsPerSecond))),
             new WaitForSpeedCommand(krakenMotor, RotationsPerSecond, 0.1)
         );
