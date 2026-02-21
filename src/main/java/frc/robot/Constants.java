@@ -6,7 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.generated.TunerConstants;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import static edu.wpi.first.units.Units.*;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -22,6 +24,11 @@ public final class Constants {
     // tab of the DriverStation
     public static final int DriverControllerPort = 0;
     public static final int OperatorControllerPort = 1;
+  }
+
+  public static class SwerveConstants {
+    public static double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    public static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
   }
 
   public static class FieldConstants {
