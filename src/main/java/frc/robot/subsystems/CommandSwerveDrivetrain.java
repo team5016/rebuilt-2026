@@ -45,7 +45,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     /* Added by Team 5016 */
     private Alliance alliance;
-    private boolean withVisionOdometry = false;
+    private boolean withVisionOdometry = true;
     private final ProfiledPIDController angularPID;
     private double distanceToHub = 0.0;
     private double angleToHub = 0.0;
