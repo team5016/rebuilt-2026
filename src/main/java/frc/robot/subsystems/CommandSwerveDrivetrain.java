@@ -45,7 +45,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     /* Added by Team 5016 */
     private Alliance alliance;
-    private boolean withVisionOdometry = true;
+    private boolean withVisionOdometry;
     private final ProfiledPIDController angularPID;
     private double distanceToHub = 0.0;
     private double angleToHub = 0.0;
@@ -154,6 +154,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         angularPID = CreateAngularPIDController();
+        withVisionOdometry = SmartDashboard.getBoolean(Constants.DashboardConstants.VisionOdoEnabledKey, true);
     }
 
     /**
@@ -180,6 +181,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         angularPID = CreateAngularPIDController();
+        withVisionOdometry = SmartDashboard.getBoolean(Constants.DashboardConstants.VisionOdoEnabledKey, true);
     }
 
     /**
@@ -214,6 +216,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         angularPID = CreateAngularPIDController();
+        withVisionOdometry = SmartDashboard.getBoolean(Constants.DashboardConstants.VisionOdoEnabledKey, true);
     }
 
     /**
