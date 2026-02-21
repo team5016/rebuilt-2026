@@ -12,10 +12,12 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -25,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
@@ -39,7 +42,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final double kSimLoopPeriod = 0.004; // 4 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+
+    /* Added by Team 5016 */
+    private Alliance alliance;
     private boolean withVisionOdometry = false;
+    private final ProfiledPIDController angularPID;
+    private double distanceToHub = 0.0;
+    private double angleToHub = 0.0;
+    private boolean seesAprilTag = false;
+    /* --end-- */
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -114,6 +125,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         )
     );
 
+    private final ProfiledPIDController CreateAngularPIDController(){
+        var pidController = new ProfiledPIDController(8.0, 0, 0, new Constraints(10.0, 26.0));
+        pidController.enableContinuousInput(-Math.PI, Math.PI);
+        return pidController;
+    }
+
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
@@ -135,6 +152,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        angularPID = CreateAngularPIDController();
     }
 
     /**
@@ -159,6 +178,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        angularPID = CreateAngularPIDController();
     }
 
     /**
@@ -191,6 +212,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        angularPID = CreateAngularPIDController();
     }
 
     /**
@@ -201,6 +224,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public Command applyRequest(Supplier<SwerveRequest> request) {
         return run(() -> this.setControl(request.get()));
+    }
+
+    public void resetAngularPID() {
+        var driveState = getStateCopy();
+        angularPID.reset(driveState.Pose.getRotation().getRadians(), driveState.Speeds.omegaRadiansPerSecond);
+    }
+
+    public double getAngularPID() {
+        var driveState = getStateCopy();
+        return angularPID.calculate(driveState.Pose.getRotation().getRadians(), angleToHub);
+    }
+
+    public boolean seesAprilTag() { 
+        return seesAprilTag;
+    }
+
+    public double getDistanceToHub() {
+        return distanceToHub;
     }
 
     /**
@@ -241,6 +282,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         ? kRedAlliancePerspectiveRotation
                         : kBlueAlliancePerspectiveRotation
                 );
+                alliance = allianceColor;
                 m_hasAppliedOperatorPerspective = true;
             });
         }
@@ -251,12 +293,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             var driveState = getState();
             double headingDeg = driveState.Pose.getRotation().getDegrees();
             double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
-            LimelightHelpers.SetRobotOrientation("limelight", headingDeg, 0, 0, 0, 0, 0);
+            LimelightHelpers.SetRobotOrientation("limelight", headingDeg,
+                /* These values not required by method, ignore: */ 0, 0, 0, 0, 0
+            );
             var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
             if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
+                seesAprilTag = llMeasurement.tagCount > 0;
                 addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
                 SmartDashboard.putString("LL Pose", llMeasurement.pose.toString());
             }
+
+            // Get drive state again for pose variables
+            driveState = getStateCopy();
+            var hubPose = alliance == Alliance.Blue 
+                    ? Constants.FieldConstants.HubBlue
+                    : Constants.FieldConstants.HubRed;
+            final double deltaX = driveState.Pose.getTranslation().getX() - hubPose.getX();
+            final double deltaY = driveState.Pose.getTranslation().getY() - hubPose.getY();
+
+            distanceToHub = Math.hypot(deltaX, deltaY);
+            angleToHub = Math.atan2(deltaY, deltaX);
         }
     }
 

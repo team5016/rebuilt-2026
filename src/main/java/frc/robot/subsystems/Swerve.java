@@ -45,6 +45,19 @@ public class Swerve {
             )
         );
 
+        // When enabled, drive rotational motion based on vision (AprilTags)
+        //  Use Left Joystick for translation (as usual)
+        controller.rightBumper().whileTrue(
+          Commands.run(() -> drivetrain.resetAngularPID())
+          .andThen(
+            drivetrain.applyRequest(() -> 
+                drive.withVelocityX(-controller.getLeftY() * MaxSpeed)
+                    .withVelocityY(-controller.getLeftX() * MaxSpeed)
+                    .withRotationalRate(drivetrain.getAngularPID() * MaxAngularRate)
+            )
+          )
+        );
+
         // Fine motor control
         fineMotorControlBindings(controller);
 
