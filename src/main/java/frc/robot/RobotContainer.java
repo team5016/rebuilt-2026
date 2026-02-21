@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AgitatorSpin;
+import frc.robot.commands.ShootUntilEmpty;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.generated.TunerConstants;
@@ -44,7 +44,7 @@ public class RobotContainer {
   private final FlywheelShooter shooter = new FlywheelShooter();
 
   // Commands
-  private final AgitatorSpin agit = new AgitatorSpin(agitator);
+  private final ShootUntilEmpty shootUntilEmpty = new ShootUntilEmpty(agitator, shooterFeeder, shooter);
 
   private final CommandXboxController driverController =
     new CommandXboxController(OperatorConstants.DriverControllerPort);
@@ -52,12 +52,14 @@ public class RobotContainer {
     new CommandXboxController(OperatorConstants.OperatorControllerPort);
 
   /* Path follower */
-  //private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     registerNamedCommands();
-    //autoChooser = AutoBuilder.buildAutoChooser("<<<CHANGE NAME>>>");
+    autoChooser = AutoBuilder.buildAutoChooser("shootUntilEmpty");
 
     configureBindings();
 
@@ -66,18 +68,9 @@ public class RobotContainer {
   }
 
   private void registerNamedCommands() {
-    // NamedCommands.registerCommand(...);
+    NamedCommands.registerCommand("shootUntilEmpty", shootUntilEmpty);
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     // new Trigger(m_exampleSubsystem::exampleCondition).onTrue(
@@ -88,13 +81,13 @@ public class RobotContainer {
     // // cancelling on release.
     // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     configureDriveBindings();
-        configureGameplayBindings();
-      }
-    
+    configureGameplayBindings();
+  }
+
   private void configureDriveBindings() {
     swerveDrivetrain.configureBindings(driverController);
   }
-    
+
   private void configureGameplayBindings() {
     operatorController.b().onTrue(intakeCollector.run());
     operatorController.a().onTrue(shooter.shoot());
@@ -102,11 +95,10 @@ public class RobotContainer {
     operatorController.y().onTrue(shooterFeeder.feed());
     operatorController.rightTrigger().onTrue(intakeHopper.toggleExtend());
 
-
     operatorController.rightBumper()
-      .onTrue(shooter.shoot().andThen(shooterFeeder.feed()))
-      .onFalse(shooter.stop().alongWith(shooterFeeder.stop()));
-    
+        .onTrue(shooter.shoot().andThen(shooterFeeder.feed()))
+        .onFalse(shooter.stop().alongWith(shooterFeeder.stop()));
+
   }
 
   /**
@@ -115,7 +107,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //return autoChooser.getSelected();
-    return Commands.none();
+    return autoChooser.getSelected();
   }
 }
